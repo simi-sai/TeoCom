@@ -44,6 +44,10 @@ void ImprimirMensaje(bool aux, Data datos){
   Serial.println("Temperatura: " + String(datos.Temperatura));
   Serial.println("Humedad: " + String(datos.Humedad));
 }
+//mostrar datos por LCD
+void imprimirLCD(Data datos){
+  return 0;
+}
 
 // Guarda los datos
 
@@ -71,6 +75,8 @@ void loop() {    // Se realiza cada 1 hora
     bool OK = radio.write(&mediciones, sizeof(mediciones));
     ImprimirMensaje(OK,mediciones);
     GuardarDatos(mediciones);
+    imprimirLCD(mediciones);
     Tiempo += 3600000;    // Aumento la bandera 1 hora
   }
 }
+
