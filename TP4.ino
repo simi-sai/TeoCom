@@ -22,6 +22,7 @@ struct Data {
 
 unsigned long long Adress = 0xB3B4B5B6CDLL;
 unsigned long Tiempo;
+Data recoleccion[24];
 
 // Retorna la Temperatura
 float getTemperatura() {
@@ -36,16 +37,18 @@ float getHumedad() {
 // Imprime los datos
 void ImprimirMensaje(bool aux, Data datos){
   if(aux) {
-      Serial.println("Datos Enviados con Exito: ");
+    Serial.println("Datos Enviados con Exito: ");
   } else {
-      Serial.println("Error al mandar los datos");
+    Serial.println("Error al mandar los datos");
   }
   Serial.println("Temperatura: " + String(datos.Temperatura));
   Serial.println("Humedad: " + String(datos.Humedad));
 }
 
+// Guarda los datos
+
 // ----------------------
-// hola
+
 // Configuraciones
 void setup() {
   Serial.begin(9600);
@@ -67,6 +70,7 @@ void loop() {    // Se realiza cada 1 hora
 
     bool OK = radio.write(&mediciones, sizeof(mediciones));
     ImprimirMensaje(OK,mediciones);
-    Tiempo += 3000;    // Aumento la bandera 1 hora
+    GuardarDatos(mediciones);
+    Tiempo += 3600000;    // Aumento la bandera 1 hora
   }
 }
