@@ -27,7 +27,7 @@ unsigned long Tiempo;
 float getTemperatura() {
   return dht.readTemperature();
 }
-//Hola simon xd
+
 // Retorna la Humedad
 float getHumedad() {
   return float(analogRead(PinHUM));
@@ -37,15 +37,15 @@ float getHumedad() {
 void ImprimirMensaje(bool aux, Data datos){
   if(aux) {
       Serial.println("Datos Enviados con Exito: ");
-    } else {
+  } else {
       Serial.println("Error al mandar los datos");
-    }
-    Serial.println("Temperatura: " + String(datos.Temperatura));
-    Serial.println("Humedad: " + String(datos.Humedad));
+  }
+  Serial.println("Temperatura: " + String(datos.Temperatura));
+  Serial.println("Humedad: " + String(datos.Humedad));
 }
 
 // ----------------------
-
+// hola
 // Configuraciones
 void setup() {
   Serial.begin(9600);
