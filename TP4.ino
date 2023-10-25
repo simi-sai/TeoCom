@@ -23,6 +23,7 @@ struct Data {
 unsigned long long Adress = 0xB3B4B5B6CDLL;
 unsigned long Tiempo;
 Data recoleccion[24];
+int Numero = 0;
 
 // Retorna la Temperatura
 float getTemperatura() {
@@ -44,12 +45,17 @@ void ImprimirMensaje(bool aux, Data datos){
   Serial.println("Temperatura: " + String(datos.Temperatura));
   Serial.println("Humedad: " + String(datos.Humedad));
 }
-//mostrar datos por LCD
-void imprimirLCD(Data datos){
+
+// Mostrar Datos por LCD
+void imprimirLCD(Data datos) {
   return 0;
 }
 
-// Guarda los datos
+// Guarda los Datos
+void GuardarDatos(Data datos) {
+  recoleccion[Numero] = datos;
+  Numero += 1;
+}
 
 // ----------------------
 
