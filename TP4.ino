@@ -37,13 +37,11 @@ float getHumedad() {
 void ImprimirMensaje(bool aux, Data datos){
   if(aux) {
       Serial.println("Datos Enviados con Exito: ");
-      Serial.println("Temperatura: " + String(datos.Temperatura));
-      Serial.println("Humedad: " + String(datos.Humedad));
     } else {
       Serial.println("Error al mandar los datos");
-      Serial.println("Temperatura: " + String(datos.Temperatura));
-      Serial.println("Humedad: " + String(datos.Humedad));
     }
+    Serial.println("Temperatura: " + String(datos.Temperatura));
+    Serial.println("Humedad: " + String(datos.Humedad));
 }
 
 // ----------------------
