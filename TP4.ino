@@ -27,7 +27,7 @@ unsigned long Tiempo;
 float getTemperatura() {
   return dht.readTemperature();
 }
-
+//Hola simon xd
 // Retorna la Humedad
 float getHumedad() {
   return float(analogRead(PinHUM));
