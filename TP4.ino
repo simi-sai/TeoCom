@@ -37,7 +37,7 @@ float getTemperatura() {
 
 // Retorna la Humedad
 float getHumedad() {
-  return 100 + map(analogRead(Pin_HUM), 500, 1024, 0, 100);
+  return map(analogRead(Pin_HUM), 1024, 300, 0, 100);
 }
 
 // Imprime los datos
@@ -123,6 +123,6 @@ void loop() {    // Se realiza cada 1 hora
     ImprimirMensaje(OK, mediciones);
     GuardarDatos(mediciones);
     imprimirLCD(mediciones);
-    Tiempo += 30000;    // Aumento la bandera 1 minuto
+    Tiempo += 5000;    // Aumento la bandera 1 minuto
   }
 }
