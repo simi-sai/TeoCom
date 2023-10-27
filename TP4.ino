@@ -1,5 +1,4 @@
 #include <LiquidCrystal_I2C.h>
-
 #include <SPI.h>
 #include <RF24.h>
 #include <nRF24L01.h>
@@ -10,6 +9,7 @@
 #define PIN_TEMP D2
 #define PIN_CE D9
 #define PIN_CS D10
+#define Boton D3
 
 // Objetos
 RF24 radio(PIN_CE, PIN_CS);
@@ -26,8 +26,9 @@ struct Data {
 // Declaracion de variables
 unsigned long long Adress = 0xB3B4B5B6CDLL;
 unsigned long Tiempo;
-Data recoleccion[24];
-int Indice;
+Data recoleccion[24][3];
+int Indice_1;
+int Indice_2;
 
 // Retorna la Temperatura
 float getTemperatura() {
@@ -49,35 +50,38 @@ void ImprimirMensaje(bool aux, Data datos){
   Serial.println("Temperatura: " + String(datos.Temperatura));
   Serial.println("Humedad: " + String(datos.Humedad));
 }
-//mostrar datos por LCD
+
+// Mostrar datos por LCD
 void imprimirLCD(Data mediciones){
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Temperatura: ");
-  lcd.print(temp);
+  lcd.print(int(mediciones.Temperatura));
   lcd.setCursor(0,1);
   lcd.print("Humedad: ");
-  lcd.print(humedad);
+  lcd.print(int(mediciones.Humedad));
   lcd.print("%");
 }
 
-
-// Mostrar Datos por LCD
-/*void imprimirLCD(Data datos) {
-  return 0
-}*/
-
 // Guarda los Datos
 void GuardarDatos(Data datos) {
-  recoleccion[Indice] = datos;
-  Indice += 1;
+  recoleccion[Indice_1][Indice_2] = datos;
+  Indice_1 += 1;
   // Para evitar el stack overflow
-  if(Indice == 24) {
-    Indice = 0;
-    for(int i = 0; i < 24; i++) {
-      Serial.println(String(recoleccion[i].Temperatura));
-      Serial.println(String(recoleccion[i].Humedad));
+  if(Indice_1 == 24) {
+    Indice_1 = 0;
+    Indice_2 += 1;
+    if(Indice_2 == 3) {
+      Indice_2 = 0;
     }
+  }
+}
+
+// Envia por serial la matriz guardada
+void EnviarSerial() {
+  for(int i = 0; i < 24; i++) {
+    Serial.println(String(recoleccion[i][0].Temperatura) + "  " + String(recoleccion[i][1].Temperatura) + "  " + String(recoleccion[i][2].Temperatura));
+    Serial.println(String(recoleccion[i][0].Humedad) + "  " + String(recoleccion[i][1].Humedad) + "  " + String(recoleccion[i][2].Humedad));
   }
 }
 
@@ -89,10 +93,15 @@ void setup() {
   radio.begin();
   dht.begin();
 
+  pinMode(Boton, INPUT);
+  attachInterrupt(digitalPinToInterrupt(Boton), EnviarSerial, CHANGE);
+
   radio.openWritingPipe(Adress);
   radio.setDataRate(RF24_250KBPS);
   Tiempo = millis();
-  Indice = 0;
+  Indice_1 = 0;
+  Indice_2 = 0;
+
   //Imprimir LCD
   lcd.init();
   lcd.backlight();
@@ -115,4 +124,3 @@ void loop() {    // Se realiza cada 1 hora
     Tiempo += 3600000;    // Aumento la bandera 1 hora
   }
 }
-
