@@ -5,7 +5,7 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <DHT_U.h>
-#define PinHUM A0
+#define Pin_HUM A0
 #define PIN_TEMP D2
 #define PIN_CE D9
 #define PIN_CS D10
@@ -24,7 +24,7 @@ struct Data {
 };
 
 // Declaracion de variables
-unsigned long long Adress = 0xB3B4B5B6CDLL;
+uint64_t Adress = 0xB3B4B5B6CDLL;
 unsigned long Tiempo;
 Data recoleccion[24][3];
 int Indice_1;
@@ -37,7 +37,7 @@ float getTemperatura() {
 
 // Retorna la Humedad
 float getHumedad() {
-  return float(analogRead(PinHUM));
+  return map(analogRead(Pin_HUM), 1024, 500, 100, 0);
 }
 
 // Imprime los datos
@@ -53,7 +53,6 @@ void ImprimirMensaje(bool aux, Data datos){
 
 // Mostrar datos por LCD
 void imprimirLCD(Data mediciones){
-  lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Temperatura: ");
   lcd.print(int(mediciones.Temperatura));
@@ -96,8 +95,11 @@ void setup() {
   pinMode(Boton, INPUT);
   attachInterrupt(digitalPinToInterrupt(Boton), EnviarSerial, CHANGE);
 
+  radio.setPALevel(RF24_PA_LOW);
   radio.openWritingPipe(Adress);
   radio.setDataRate(RF24_250KBPS);
+  radio.setChannel(100);
+
   Tiempo = millis();
   Indice_1 = 0;
   Indice_2 = 0;
@@ -121,6 +123,6 @@ void loop() {    // Se realiza cada 1 hora
     ImprimirMensaje(OK, mediciones);
     GuardarDatos(mediciones);
     //imprimirLCD(mediciones);
-    Tiempo += 3600000;    // Aumento la bandera 1 hora
+    Tiempo += 60000;    // Aumento la bandera 1 minuto
   }
 }
