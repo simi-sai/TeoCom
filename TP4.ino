@@ -37,7 +37,7 @@ float getTemperatura() {
 
 // Retorna la Humedad
 float getHumedad() {
-  return map(analogRead(Pin_HUM), 1024, 500, 100, 0);
+  return 100 + map(analogRead(Pin_HUM), 500, 1024, 0, 100);
 }
 
 // Imprime los datos
@@ -45,7 +45,7 @@ void ImprimirMensaje(bool aux, Data datos){
   if(aux) {
     Serial.println("Datos Enviados con Exito: ");
   } else {
-    Serial.println("Error al mandar los datos");
+    Serial.println("Error al mandar los datos: ");
   }
   Serial.println("Temperatura: " + String(datos.Temperatura));
   Serial.println("Humedad: " + String(datos.Humedad));
@@ -54,11 +54,11 @@ void ImprimirMensaje(bool aux, Data datos){
 // Mostrar datos por LCD
 void imprimirLCD(Data mediciones){
   lcd.setCursor(0,0);
-  lcd.print("Temperatura: ");
-  lcd.print(int(mediciones.Temperatura));
+  lcd.print("Temp: ");
+  lcd.print(mediciones.Temperatura);
   lcd.setCursor(0,1);
   lcd.print("Humedad: ");
-  lcd.print(int(mediciones.Humedad));
+  lcd.print(mediciones.Humedad);
   lcd.print("%");
 }
 
@@ -92,8 +92,8 @@ void setup() {
   radio.begin();
   dht.begin();
 
-  pinMode(Boton, INPUT);
-  attachInterrupt(digitalPinToInterrupt(Boton), EnviarSerial, CHANGE);
+  //pinMode(Boton, INPUT);
+  //attachInterrupt(digitalPinToInterrupt(Boton), EnviarSerial, CHANGE);
 
   radio.setPALevel(RF24_PA_LOW);
   radio.openWritingPipe(Adress);
@@ -114,7 +114,7 @@ void setup() {
 // Programa Principal
 void loop() {    // Se realiza cada 1 hora
   if(millis() >= Tiempo) {  // Analiza la bandera
-    Data mediciones;
+    Data mediciones; 
     mediciones.Modulo_id = 2;
     mediciones.Temperatura = getTemperatura();
     mediciones.Humedad = getHumedad();
@@ -122,7 +122,7 @@ void loop() {    // Se realiza cada 1 hora
     bool OK = radio.write(&mediciones, sizeof(mediciones));
     ImprimirMensaje(OK, mediciones);
     GuardarDatos(mediciones);
-    //imprimirLCD(mediciones);
-    Tiempo += 60000;    // Aumento la bandera 1 minuto
+    imprimirLCD(mediciones);
+    Tiempo += 30000;    // Aumento la bandera 1 minuto
   }
 }
