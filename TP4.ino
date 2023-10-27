@@ -23,9 +23,11 @@ struct Data {
   float Humedad;
 };
 
+// Declaracion de variables
 unsigned long long Adress = 0xB3B4B5B6CDLL;
 unsigned long Tiempo;
 Data recoleccion[24];
+int Indice;
 
 // Retorna la Temperatura
 float getTemperatura() {
@@ -59,7 +61,25 @@ void imprimirLCD(Data mediciones){
   lcd.print("%");
 }
 
-// Guarda los datos
+
+// Mostrar Datos por LCD
+/*void imprimirLCD(Data datos) {
+  return 0
+}*/
+
+// Guarda los Datos
+void GuardarDatos(Data datos) {
+  recoleccion[Indice] = datos;
+  Indice += 1;
+  // Para evitar el stack overflow
+  if(Indice == 24) {
+    Indice = 0;
+    for(int i = 0; i < 24; i++) {
+      Serial.println(String(recoleccion[i].Temperatura));
+      Serial.println(String(recoleccion[i].Humedad));
+    }
+  }
+}
 
 // ----------------------
 
@@ -72,6 +92,7 @@ void setup() {
   radio.openWritingPipe(Adress);
   radio.setDataRate(RF24_250KBPS);
   Tiempo = millis();
+  Indice = 0;
   //Imprimir LCD
   lcd.init();
   lcd.backlight();
@@ -88,9 +109,9 @@ void loop() {    // Se realiza cada 1 hora
     mediciones.Humedad = getHumedad();
 
     bool OK = radio.write(&mediciones, sizeof(mediciones));
-    ImprimirMensaje(OK,mediciones);
+    ImprimirMensaje(OK, mediciones);
     GuardarDatos(mediciones);
-    imprimirLCD(mediciones);
+    //imprimirLCD(mediciones);
     Tiempo += 3600000;    // Aumento la bandera 1 hora
   }
 }
