@@ -1,3 +1,5 @@
+#include <LiquidCrystal_I2C.h>
+
 #include <SPI.h>
 #include <RF24.h>
 #include <nRF24L01.h>
@@ -12,6 +14,7 @@
 // Objetos
 RF24 radio(PIN_CE, PIN_CS);
 DHT dht(PIN_TEMP, DHT11);
+LiquidCrystal_I2C lcd(0x27,16,2);
 
 // Definicion de datos
 struct Data {
@@ -45,8 +48,15 @@ void ImprimirMensaje(bool aux, Data datos){
   Serial.println("Humedad: " + String(datos.Humedad));
 }
 //mostrar datos por LCD
-void imprimirLCD(Data datos){
-  return 0;
+void imprimirLCD(Data mediciones){
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Temperatura: ");
+  lcd.print(temp);
+  lcd.setCursor(0,1);
+  lcd.print("Humedad: ");
+  lcd.print(humedad);
+  lcd.print("%");
 }
 
 // Guarda los datos
@@ -62,6 +72,11 @@ void setup() {
   radio.openWritingPipe(Adress);
   radio.setDataRate(RF24_250KBPS);
   Tiempo = millis();
+  //Imprimir LCD
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+  
 }
 
 // Programa Principal
