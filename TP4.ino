@@ -65,11 +65,12 @@ void imprimirLCD(Data mediciones){
 // Guarda los Datos
 void GuardarDatos(Data datos) {
   recoleccion[Indice_1][Indice_2] = datos;
-  Indice_1 += 1;
+  Indice_1++;
   // Para evitar el stack overflow
   if(Indice_1 == 24) {
     Indice_1 = 0;
-    Indice_2 += 1;
+    Indice_2 ++;
+    EnviarSerial();
     if(Indice_2 == 3) {
       Indice_2 = 0;
     }
@@ -79,9 +80,11 @@ void GuardarDatos(Data datos) {
 // Envia por serial la matriz guardada
 void EnviarSerial() {
   for(int i = 0; i < 24; i++) {
-    Serial.println(String(recoleccion[i][0].Temperatura) + "  " + String(recoleccion[i][1].Temperatura) + "  " + String(recoleccion[i][2].Temperatura));
-    Serial.println(String(recoleccion[i][0].Humedad) + "  " + String(recoleccion[i][1].Humedad) + "  " + String(recoleccion[i][2].Humedad));
+    Serial.println(String(recoleccion[i][0].Temperatura) + "   " + String(recoleccion[i][1].Temperatura) + "   " + String(recoleccion[i][2].Temperatura));
+    Serial.println(String(recoleccion[i][0].Humedad) + "   " + String(recoleccion[i][1].Humedad) + "   " + String(recoleccion[i][2].Humedad));
+    Serial.println("----------");
   }
+  Serial.println("- - - - - - - - - - -");
 }
 
 // ----------------------
@@ -105,15 +108,14 @@ void setup() {
   Indice_2 = 0;
 
   //Imprimir LCD
-  lcd.init();
-  lcd.backlight();
-  lcd.clear();
-  
+  //lcd.init();
+  //lcd.backlight();
+  //lcd.clear();
 }
 
 // Programa Principal
-void loop() {    // Se realiza cada 1 hora
-  if(millis() >= Tiempo) {  // Analiza la bandera
+void loop() {                   // Se realiza cada 1 hora
+  if(millis() >= Tiempo) {      // Analiza la bandera
     Data mediciones; 
     mediciones.Modulo_id = 2;
     mediciones.Temperatura = getTemperatura();
@@ -122,7 +124,7 @@ void loop() {    // Se realiza cada 1 hora
     bool OK = radio.write(&mediciones, sizeof(mediciones));
     ImprimirMensaje(OK, mediciones);
     GuardarDatos(mediciones);
-    imprimirLCD(mediciones);
-    Tiempo += 5000;    // Aumento la bandera 1 minuto
+    //imprimirLCD(mediciones);
+    Tiempo += 3600000;          // Aumento la bandera 1 hora
   }
 }
