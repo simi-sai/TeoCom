@@ -24,8 +24,8 @@ struct Data {
 
 // Declaracion de variables
 uint64_t Adress = 0xB3B4B5B6CDLL;
-unsigned long Tiempo;
 Data mediciones;
+unsigned long Tiempo;
 
 // Retorna la Temperatura
 float getTemperatura() {
@@ -84,9 +84,9 @@ void setup() {
 void loop() {           
   if(millis() >= Tiempo) {      // Analiza la bandera
     Medir();
+
     int i = 0;
     bool OK = false;
-
     do {
       OK = radio.write(&mediciones, sizeof(mediciones));
       i++;
